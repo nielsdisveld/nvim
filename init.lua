@@ -510,7 +510,6 @@ local servers = {
     -- rust_analyzer = {},
     -- tsserver = {},
     -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-    fsautocomplete = {},
     lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
@@ -540,6 +539,10 @@ mason_lspconfig.setup_handlers {
             on_attach = on_attach,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
+            -- Ensure fsautocomplete does not autostart since ionide should be attached
+            autostart = function()
+                return server_name ~= "fsautocomplete"
+            end,
         }
     end,
 }
