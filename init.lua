@@ -277,6 +277,7 @@ vim.o.breakindent = true
 
 -- Save undo history
 vim.o.undofile = true
+vim.o.undodir = "~/.vim/undodir"
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
@@ -296,7 +297,6 @@ vim.o.completeopt = 'menuone,noselect'
 vim.o.termguicolors = true
 
 -- [[ Basic Keymaps ]]
-
 
 -- Navigating windows
 vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -319,6 +319,9 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+
+-- Remap for getting out of insert mode when in terminal
+vim.keymap.set('t', "<Esc>", "<C-\\><C-n>")
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
