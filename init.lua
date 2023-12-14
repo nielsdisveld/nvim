@@ -297,6 +297,13 @@ vim.o.termguicolors = true
 
 -- [[ Basic Keymaps ]]
 
+
+-- Navigating windows
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+
 -- Swap lines in visual mode
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -534,19 +541,27 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
     function(server_name)
-        require('lspconfig')[server_name].setup {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-            filetypes = (servers[server_name] or {}).filetypes,
-            -- Ensure fsautocomplete does not autostart since ionide should be attached
-            autostart = function()
-                return server_name ~= "fsautocomplete"
-            end,
-        }
+        -- Ensure fsautocomplete does not load since ionide should be used
+        if server_name ~= "fsautocomplete" then
+            require('lspconfig')[server_name].setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                settings = servers[server_name],
+                filetypes = (servers[server_name] or {}).filetypes,
+            }
+        end
     end,
 }
-
+-- Manually setup ionide to omit some annoying warnings
+mason_lspconfig.setup_handlers {
+    require('ionide').setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+    }
+}
+-- Keymaps for F#-Interactive
+vim.keymap.set("n", "<leader>i", ":call fsharp#sendLineToFsi()<cr>")
+vim.keymap.set("v", "<leader>i", ":call fsharp#sendSelectionToFsi()<cr><esc>")
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
