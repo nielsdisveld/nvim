@@ -45,7 +45,8 @@ return {
     -- dotnet
     dap.adapters.coreclr = {
       type = 'executable',
-      command = '/Users/nielsdisveld/Downloads/netcoredbg/build/src/netcoredbg',
+      command = '/Users/nielsdisveld/Applications/netcoredbg/netcoredbg',
+      -- Follow install steps: https://github.com/Samsung/netcoredbg
       args = { '--interpreter=vscode' }
     }
     vim.g.dotnet_build_project = function()
