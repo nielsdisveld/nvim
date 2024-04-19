@@ -151,16 +151,24 @@ require('lazy').setup({
     },
   },
 
+  -- {
+  -- Theme inspired by Atom
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     require('onedark').setup {
+  --       style = 'deep'
+  --     }
+  --     require('onedark').load()
+  --   end,
+  -- },
+
+  -- Tokyo night
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    "folke/tokyonight.nvim",
+    lazy = false,
     priority = 1000,
-    config = function()
-      require('onedark').setup {
-        style = 'deep'
-      }
-      require('onedark').load()
-    end,
+    opts = {},
   },
 
   {
@@ -232,6 +240,8 @@ require('lazy').setup({
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   { import = 'custom.plugins' },
 }, {})
+
+vim.cmd.colorscheme("tokyonight-moon")
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -373,7 +383,7 @@ vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { des
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'lua', 'rust', 'vimdoc', 'vim', 'bash', 'c_sharp' },
+    ensure_installed = { 'lua', 'rust', 'vimdoc', 'vim', 'bash', 'c_sharp', 'haskell' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -518,6 +528,7 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  hls = {},
   omnisharp = {},
   lua_ls = {
     Lua = {
@@ -613,5 +624,12 @@ cmp.setup {
   },
 }
 
+require 'glow-hover'.setup {
+  -- The followings are the default values
+  max_width = 50,
+  padding = 10,
+  border = 'shadow',
+  glow_path = '~/Applications/glow/glow'
+}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
