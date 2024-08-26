@@ -53,7 +53,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable', -- latest stable release
+    '--branch=stable',     -- latest stable release
     lazypath,
   }
 end
@@ -182,6 +182,15 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_c = {
+          {
+            'filename',
+            path = 1             -- 0 = just filename, 1 = relative path, 2 = absolute path
+          }
+        },
+        -- other sections...
+      }
     },
   },
 
@@ -273,6 +282,16 @@ vim.o.wrap = false
 vim.o.scrollopt = true
 vim.o.scrolloff = 8
 
+-- Centering after moving
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "G", "Gzz")
+
+-- Removing newline
+vim.keymap.set("n", "J", "mzJ`z")
+
 -- Enable mouse mode
 vim.o.mouse = 'a'
 
@@ -348,8 +367,8 @@ require('telescope').setup {
   defaults = {
     mappings = {
       i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
+        -- ['<C-u>'] = false,
+        -- ['<C-d>'] = false,
       },
     },
   },
@@ -402,7 +421,7 @@ vim.defer_fn(function()
     textobjects = {
       select = {
         enable = true,
-        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+        lookahead = true,         -- Automatically jump forward to textobj, similar to targets.vim
         keymaps = {
           -- You can use the capture groups defined in textobjects.scm
           ['aa'] = '@parameter.outer',
@@ -415,7 +434,7 @@ vim.defer_fn(function()
       },
       move = {
         enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
+        set_jumps = true,         -- whether to set jumps in the jumplist
         goto_next_start = {
           [']m'] = '@function.outer',
           [']]'] = '@class.outer',
@@ -481,7 +500,7 @@ local on_attach = function(_, bufnr)
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  -- nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -528,7 +547,30 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  hls = {
+    settings = {
+      haskell = {
+        formattingProvider = "ormolu",         -- or stylish-haskell, brittany, etc.
+        rootPatterns = { "*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml" },
+        plugin = {
+          hlint = { globalOn = true },
+          retrie = { globalOn = true },
+          class = { codeLensOn = true },
+          imports = { codeLensOn = true, on = true },
+          refactor = { codeActionsOn = true },
+          -- Disable or enable plugins as needed for performance
+        },
+        -- Increase memory limits
+        maxNumberOfProblems = 10000,
+        -- Configure diagnostics
+        diagnosticsDebounce = 500,         -- Increase debounce time
+        completionSnippetsOn = true,
+        checkProject = true,
+      }
+    }
+  },
   omnisharp = {},
+  elmls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -554,7 +596,7 @@ mason_lspconfig.setup {
 mason_lspconfig.setup_handlers {
   function(server_name)
     -- Ensure fsautocomplete does not load since ionide should be used
-    if server_name ~= "fsautocomplete" then
+    if server_name ~= "fsautocomplete" or server_name ~= "hls" then
       require('lspconfig')[server_name].setup {
         capabilities = capabilities,
         on_attach = on_attach,
@@ -562,7 +604,16 @@ mason_lspconfig.setup_handlers {
         filetypes = (servers[server_name] or {}).filetypes,
       }
     end
-  end,
+    if server_name == "hls" then
+      require 'lspconfig'.hls.setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = servers[server_name],
+        rootPatterns = { '*.cabal', 'stack.yaml', 'cabal.project', 'package.yaml', 'hie.yaml' },
+        filetypes = (servers[server_name] or {}).filetypes,
+        cmd = { "haskell-language-server-8.8.4", "--lsp", "-j 12" } }
+    end
+  end
 }
 -- Manually setup ionide to omit some annoying warnings
 mason_lspconfig.setup_handlers {
@@ -623,12 +674,12 @@ cmp.setup {
   },
 }
 
-require 'glow-hover'.setup {
-  -- The followings are the default values
-  max_width = 50,
-  padding = 10,
-  border = 'shadow',
-  glow_path = '~/Applications/glow/glow'
+-- Load Hoogle extension for telescope
+local telescope = require('telescope')
+telescope.setup {
+  vim.api.nvim_set_keymap('n', '<leader>so', ':Telescope hoogle<CR>', { desc = '[S]earch H[O]oogle' })
 }
+telescope.load_extension('hoogle')
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

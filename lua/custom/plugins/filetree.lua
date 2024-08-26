@@ -11,6 +11,7 @@ return {
   },
   config = function()
     require('neo-tree').setup({
+
       event_handlers = {
 
         {
@@ -22,8 +23,8 @@ return {
             require("neo-tree.command").execute({ action = "close" })
           end
         },
-
       }
     })
+    vim.api.nvim_set_keymap('n', '<leader>f', ':Neotree toggle<CR>', { noremap = true, silent = true })
   end,
 }
