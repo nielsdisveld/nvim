@@ -53,7 +53,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable',     -- latest stable release
+    '--branch=stable', -- latest stable release
     lazypath,
   }
 end
@@ -186,7 +186,7 @@ require('lazy').setup({
         lualine_c = {
           {
             'filename',
-            path = 1             -- 0 = just filename, 1 = relative path, 2 = absolute path
+            path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
           }
         },
         -- other sections...
@@ -367,9 +367,13 @@ require('telescope').setup {
   defaults = {
     mappings = {
       i = {
+        ["<C-w>"] = require('telescope.actions').delete_buffer
         -- ['<C-u>'] = false,
         -- ['<C-d>'] = false,
       },
+      n = {
+        ["<C-w>"] = require('telescope.actions').delete_buffer
+      }
     },
   },
 }
@@ -421,7 +425,7 @@ vim.defer_fn(function()
     textobjects = {
       select = {
         enable = true,
-        lookahead = true,         -- Automatically jump forward to textobj, similar to targets.vim
+        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
         keymaps = {
           -- You can use the capture groups defined in textobjects.scm
           ['aa'] = '@parameter.outer',
@@ -434,7 +438,7 @@ vim.defer_fn(function()
       },
       move = {
         enable = true,
-        set_jumps = true,         -- whether to set jumps in the jumplist
+        set_jumps = true, -- whether to set jumps in the jumplist
         goto_next_start = {
           [']m'] = '@function.outer',
           [']]'] = '@class.outer',
@@ -550,7 +554,7 @@ local servers = {
   hls = {
     settings = {
       haskell = {
-        formattingProvider = "ormolu",         -- or stylish-haskell, brittany, etc.
+        formattingProvider = "ormolu", -- or stylish-haskell, brittany, etc.
         rootPatterns = { "*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml" },
         plugin = {
           hlint = { globalOn = true },
@@ -563,7 +567,7 @@ local servers = {
         -- Increase memory limits
         maxNumberOfProblems = 10000,
         -- Configure diagnostics
-        diagnosticsDebounce = 500,         -- Increase debounce time
+        diagnosticsDebounce = 500, -- Increase debounce time
         completionSnippetsOn = true,
         checkProject = true,
       }
